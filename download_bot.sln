@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "download_bot", "download_bot.csproj", "{F63BB214-28EE-44F9-8145-3B4F9A258466}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F63BB214-28EE-44F9-8145-3B4F9A258466}.Debug|x86.ActiveCfg = Debug|x86
+		{F63BB214-28EE-44F9-8145-3B4F9A258466}.Debug|x86.Build.0 = Debug|x86
+		{F63BB214-28EE-44F9-8145-3B4F9A258466}.Release|x86.ActiveCfg = Release|x86
+		{F63BB214-28EE-44F9-8145-3B4F9A258466}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = download_bot.csproj
+	EndGlobalSection
+EndGlobal
