@@ -7,6 +7,22 @@ namespace download_bot
 {
 	class Downloader
 	{
+		public static bool UrlExists(Uri url)
+		{
+			try 
+			{
+				HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (url);
+				request.AllowAutoRedirect = false;
+				HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
+				bool isOK = response.StatusCode == HttpStatusCode.OK;
+				response.Close ();
+				return isOK;
+			}
+    		catch(WebException) {
+			}
+			return false;    
+		}
+
 		public static void Main (string[] args)
 		{
 			if (args.Length < 2) {
@@ -82,9 +98,16 @@ namespace download_bot
 				if(!Directory.Exists (fullLocalDir))
 					Directory.CreateDirectory (fullLocalDir);
 
+				string path = Path.Combine(tempDir , "." + uri.LocalPath);
+
+				if (File.Exists (path))
+					return true;
+
+				if (!UrlExists (uri))
+					return false;
+
 				try
 				{
-					string path = Path.Combine(tempDir , "." + uri.LocalPath);
 					client.DownloadFile (uri, path);
 				}
 				catch (WebException ex)
@@ -94,11 +117,7 @@ namespace download_bot
 							return false;
 					}
 				}
-				catch (Exception ex)
-				{
-				}
 			}
-
 			return true;
 		}
 
