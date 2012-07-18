@@ -41,9 +41,9 @@ namespace download_bot
 
 			TimeSpan timeStep = TimeSpan.FromDays (1.0);
 
-			int start = 0;
-			int end  = -1;
-			int step = 1;
+			long start = 0;
+			long end   = -1;
+			int step   = 1;
 			
 			bool isDate = DateTime.TryParse (range [0], out dateStart);
 			
@@ -55,19 +55,26 @@ namespace download_bot
 				if (!hasStep || !TimeSpan.TryParse (range [2], out timeStep))
 					timeStep = TimeSpan.FromDays (1.0);
 			} else {
-				if (!int.TryParse (range [0], out start)) {
+				if (!long.TryParse (range [0], out start)) {
 					Console.WriteLine ("Invalid range format {0}, use numbers or date", range [0]);
 					return;
 				}
 
 				if (hasEnd)
-					hasEnd = int.TryParse (range [1], out end);
+					hasEnd = long.TryParse (range [1], out end);
 
 				if (!hasStep || int.TryParse (range [2], out step))
 				    step = 1;
 			}
 
-			var mc = new Downloader ();
+			string dir;
+
+			if (args.Length > 2)
+				dir = args [2];
+			else
+				dir = Directory.GetCurrentDirectory ();
+
+			var mc = new Downloader (dir);
 
 			if (isDate)
 				mc.DownloadFilesInDateRange (url, dateStart, dateEnd, timeStep, hasEnd);
@@ -77,9 +84,9 @@ namespace download_bot
 
 		string tempDir;
 
-		public Downloader()
+		public Downloader(string dir)
 		{
-			tempDir = Directory.GetCurrentDirectory ();
+			tempDir = dir;
 		}
 		
 		public bool DownloadFile (string url)
@@ -106,6 +113,8 @@ namespace download_bot
 				if (!UrlExists (uri))
 					return false;
 
+				Console.WriteLine ("Downloading file: {0} ...", uri);
+
 				try
 				{
 					client.DownloadFile (uri, path);
@@ -122,14 +131,18 @@ namespace download_bot
 		}
 
 		
-		public void DownloadFilesInRange(string pattern, int start, int end, int step, bool hasEnd)
+		public void DownloadFilesInRange(string pattern, long start, long end, int step, bool hasEnd)
 		{
 			if (start > end)
 				throw new ArgumentException ("Start cannot be gretar than end");
-			
-			for (int i = start; i <= end; i += step)
+
+			long delta = end > start ? end - start : 1;
+			for (long i = start; i <= end; i += step)
 			{
 				string url = string.Format(pattern, i);
+
+				double progress = (100.0 * (i - start)) / delta;
+				Console.WriteLine ("{0:0.0}%", progress);
 				
 				bool fail = DownloadFile(url);
 
